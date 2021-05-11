@@ -26,10 +26,10 @@ async function listing_prices(request,response) {
 
     const new_hash = { ...hash }
     if (new_hash.listing_type_id === 'gold_pro') {
-      new_hash.listing_type_id = +search.Premium
+      new_hash.sale_fee_amount = +search.Premium
     }
     else {
-      new_hash.listing_type_id = +search.Clasica
+      new_hash.sale_fee_amount = +search.Clasica
     }
     return new_hash
     });
