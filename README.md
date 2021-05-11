@@ -17,8 +17,9 @@ curl -X GET https://meli-newfees.vercel.app/api/v1/listing_prices/MLB272126
 
 ## How this work?
 
-- Mercado Livre show the new fees in this link: https://www.mercadolivre.com.br/landing/costos-venta-producto?domain=2904
+- Mercado Livre show the new fees in this link: `https://www.mercadolivre.com.br/landing/costos-venta-producto?domain=2904`
 This page get fees from a large json, this json is the file `./files/new_fees.json` the project.
+
 - `current_fees` field is current fees from Mercado Livre API from endpoint: `https://api.mercadolibre.com/sites/MLB/listing_prices?price=100&category_id=<CATEGORY_ID>`
 - `new_fees` this field is from file `./files/new_fees.json`
 
