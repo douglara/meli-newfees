@@ -5,29 +5,8 @@ export async function getStaticPaths() {
   }
 }
 
-async function listing_prices(request,response) {
-  const category_id = request.query.id;
-  const category_id_only_numbers = category_id.replace(/\D/g,'');
 
-  const category_on_meli_request = await fetch(`https://api.mercadolibre.com/sites/MLB/listing_prices?price=100&category_id=${category_id}`)
-  if (category_on_meli_request.status != 200) {
-    return response.json({
-      message: "Category_id parameter is invalid",
-      error: "bad_request",
-    });
-  }
-
-  const category_on_meli = await category_on_meli_request.json()
-
-  response.json({
-    id: category_id,
-    current_fees: category_on_meli,
-    new_fees: get_new_fees(category_id_only_numbers),
-    old_fees: get_old_fees(category_id)
-  });
-}
-
-function get_old_fees(category_id) {
+async function get_old_fees(category_id) {
   const old_fees_json = require('../../../../files/old_fees.json');
   const old_fees = old_fees_json[`${category_id}`]
   if (old_fees === undefined){
@@ -37,7 +16,7 @@ function get_old_fees(category_id) {
 }
 
 
-function get_new_fees(category_id_only_numbers) {
+async function get_new_fees(category_id_only_numbers, category_on_meli) {
   const new_fees_json = require('../../../../files/new_fees.json');
   const search = new_fees_json.ML.categoriesFromFile.filter(it => it.L7 === `${category_id_only_numbers}`)[0];
   if (search === undefined) {
@@ -57,6 +36,29 @@ function get_new_fees(category_id_only_numbers) {
     return new_hash
   });
   return new_fees
+}
+
+
+async function listing_prices(request,response) {
+  const category_id = request.query.id;
+  const category_id_only_numbers = category_id.replace(/\D/g,'');
+
+  const category_on_meli_request = await fetch(`https://api.mercadolibre.com/sites/MLB/listing_prices?price=100&category_id=${category_id}`)
+  if (category_on_meli_request.status != 200) {
+    return response.json({
+      message: "Category_id parameter is invalid",
+      error: "bad_request",
+    });
+  }
+
+  const category_on_meli = await category_on_meli_request.json()
+
+  response.json({
+    id: category_id,
+    current_fees: category_on_meli,
+    new_fees: await get_new_fees(category_id_only_numbers, category_on_meli),
+    old_fees: await get_old_fees(category_id)
+  });
 }
 
 
